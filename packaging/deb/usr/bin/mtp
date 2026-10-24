@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# MinimalTouchPlayer (MTP) — system launcher
+set -euo pipefail
+
+APP_DIR="/usr/share/mtp"
+
+if [[ ! -f "${APP_DIR}/musicplayer.py" ]]; then
+    echo "Error: musicplayer.py not found at ${APP_DIR}/musicplayer.py" >&2
+    exit 1
+fi
+
+# Check for required Python packages
+python3 -c "import customtkinter" 2>/dev/null || {
+    echo "❌ Missing dependency: customtkinter"
+    echo ""
+    echo "   Install with:  pip install customtkinter"
+    exit 1
+}
+
+python3 -c "import numpy" 2>/dev/null || {
+    echo "❌ Missing dependency: numpy"
+    echo ""
+    echo "   Install with:  sudo apt install python3-numpy"
+    exit 1
+}
+
+cd "$APP_DIR"
+exec python3 musicplayer.py "$@"

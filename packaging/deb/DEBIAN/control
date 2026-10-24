@@ -1,0 +1,12 @@
+Package: mtp
+Version: 1.1.0
+Section: sound
+Priority: optional
+Architecture: all
+Depends: python3 (>= 3.10), python3-numpy, ffmpeg, alsa-utils | pipewire-pulseaudio
+Maintainer: Pirate85 <Pirate85@web.de>
+Description: MinimalTouchPlayer — minimalist touch music player
+ A square, dark-themed desktop music player with large touch-friendly buttons and no album art.
+ Supports MP3, FLAC, OGG, Opus, M4A/AAC, WAV, WMA, AIFF, APE, WebM.
+ Features: folder picker, live volume control, seek bar, position resume,
+ bilingual UI (DE/EN), keyboard shortcuts, zoom support.

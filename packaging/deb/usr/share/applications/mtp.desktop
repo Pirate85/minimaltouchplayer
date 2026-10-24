@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=MinimalTouchPlayer
+GenericName=Music Player
+Comment=Minimalist touch music player with large buttons
+Exec=/usr/bin/mtp
+Icon=mtp
+StartupWMClass=mtp
+Terminal=false
+Categories=Audio;Player;AudioVideo;
+Keywords=music;audio;player;tunes;mp3;flac;ogg;minimal;touch;
+MimeType=audio/mpeg;audio/flac;audio/ogg;audio/opus;audio/mp4;audio/x-wav;audio/x-ms-wma;audio/aiff;audio/vnd.audible.ape;audio/webm;

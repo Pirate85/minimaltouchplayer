@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+
+# Runtime / user data
+config.json
+
+# Backups & temp
+*.bak
+*.bak.*
+backup-*.zip
+backup-*.tar.gz
+
+# Build artifacts
+packaging/*.deb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.session_context/
