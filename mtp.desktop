@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=MinimalTouchPlayer
+GenericName=Music Player
+Comment=Minimalist touch music player with large buttons (source install)
+
+# ⚠️ SOURCE INSTALL: Replace /PATH/TO/REPO with your actual clone location!
+#    e.g.  Exec=/home/youruser/projects/minimaltouchplayer/start.sh
+Exec=/PATH/TO/REPO/start.sh
+Icon=/PATH/TO/REPO/icon.png
+
+StartupWMClass=mtp
+Terminal=false
+Categories=Audio;Player;AudioVideo;
+Keywords=music;audio;player;tunes;mp3;flac;ogg;minimal;touch;

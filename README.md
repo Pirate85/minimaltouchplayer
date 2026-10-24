@@ -48,11 +48,14 @@ sudo apt install ./packaging/mtp_1.1.0_all.deb
 
 The package installs the app to `/usr/share/mtp/`, a launcher at `/usr/bin/mtp`, and registers it in your application menu automatically. The launcher will warn you if any dependency is missing.
 
-### From source (development)
+### From source (any Linux distro)
 
 ```bash
-# Install all dependencies
-sudo apt install python3 ffmpeg alsa-utils python3-numpy
+# Install all dependencies (adjust package manager for your distro)
+sudo apt install python3 ffmpeg alsa-utils python3-numpy   # Debian/Ubuntu
+# sudo dnf install python3 ffmpeg alsa-utils python3-numpy  # Fedora
+# sudo pacman -S python ffmpeg alsa-lib numpy               # Arch
+
 pip install customtkinter
 
 # Run
@@ -60,6 +63,14 @@ pip install customtkinter
 # or directly:
 python3 musicplayer.py
 ```
+
+#### Optional: Add to your application menu
+
+1. Copy `mtp.desktop` to `~/.local/share/applications/`
+2. Replace `/PATH/TO/REPO` with your actual clone path (e.g., `~/projects/minimaltouchplayer`)
+3. Run `update-desktop-database ~/.local/share/applications/`
+
+Now "MinimalTouchPlayer" appears in your app launcher! 🎵
 
 ## Usage
 
