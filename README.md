@@ -2,6 +2,8 @@
 
 A minimalist, **square** desktop music player designed for small touch monitors (10", 1920×1280). Large buttons, dark theme, no album art — built to fit into tight desktop corners without wasting space. Zero clutter: just press play.
 
+![MinimalTouchPlayer Screenshot](images/MinimalTouchPlayer.png)
+
 ## Features
 
 - 🎵 **Multi-format playback** — MP3, FLAC, OGG, Opus, M4A/AAC, WAV, WMA, AIFF, APE, WebM
