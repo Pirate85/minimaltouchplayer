@@ -3,4 +3,4 @@
 # Optionales Audio-Gerät erzwingen (falls leise/stumm):
 #   MUSIKPLAYER_DEVICE=pipewire ./start.sh
 cd "$(dirname "$0")"
-exec python3 musicplayer.py
+exec python3 mtp.py

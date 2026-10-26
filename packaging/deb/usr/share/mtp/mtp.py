@@ -68,7 +68,8 @@ def S(key):
     return STRINGS[key][_LANG]
 
 HERE          = os.path.dirname(os.path.abspath(__file__))
-CONFIG_PATH   = os.path.join(HERE, "config.json")
+CONFIG_DIR    = os.path.expanduser("~/.mtp")
+CONFIG_PATH   = os.path.join(CONFIG_DIR, "config.json")
 FONT          = "DejaVu Sans"
 
 
@@ -316,7 +317,7 @@ class Engine:
 
 # ================================== GUI ===================================
 class MusicPlayer:
-    WIDTH = 470
+    WIDTH = 390
     HEIGHT = 470
     MIN_SCALE, MAX_SCALE, STEP = 0.7, 2.5, 0.1
 
@@ -377,6 +378,7 @@ class MusicPlayer:
             "last_pos": self._resume_pos,
         }
         try:
+            os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
             with open(CONFIG_PATH, "w") as f:
                 json.dump(data, f)
         except Exception:

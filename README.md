@@ -61,7 +61,7 @@ pip install customtkinter
 # Run
 ./start.sh
 # or directly:
-python3 musicplayer.py
+python3 mtp.py
 ```
 
 #### Optional: Add to your application menu
@@ -89,7 +89,7 @@ Select a music folder and press play. Tracks are scanned recursively, played in 
 
 ## Configuration
 
-Runtime settings (volume, last folder, zoom level, resume position) are stored automatically in `config.json` next to the application. No manual configuration needed.
+Runtime settings (volume, last folder, zoom level, resume position) are stored automatically in `~/.mtp/config.json`. The directory is created on first save. No manual configuration needed.
 
 ### Audio device override
 
@@ -116,7 +116,7 @@ Architecture: `ffmpeg` decodes in real time → Python pump thread scales volume
 ## Project Structure
 
 ```
-├── musicplayer.py          # Complete application (GUI + audio engine)
+├── mtp.py                  # Complete application (GUI + audio engine)
 ├── icon.png                # App icon
 ├── start.sh                # Development launcher script
 ├── README.md               # This file
@@ -132,6 +132,9 @@ sudo dpkg -r mtp
 # Removes: /usr/bin/mtp, /usr/share/applications/mtp.desktop,
 #          /usr/share/icons/hicolor/128x128/apps/mtp.png,
 #          /usr/share/mtp/
+
+# User config (NOT removed by package uninstall):
+rm -rf ~/.mtp/    # optional: removes saved volume, folder, resume position
 ```
 
 ## License

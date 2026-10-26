@@ -19,7 +19,7 @@ echo "   Output:  ${OUTPUT}"
 echo ""
 
 # --- Sanity checks -------------------------------------------------
-[[ -f "${PROJECT_ROOT}/musicplayer.py" ]] || { echo "❌ musicplayer.py not found"; exit 1; }
+[[ -f "${PROJECT_ROOT}/mtp.py" ]] || { echo "❌ mtp.py not found"; exit 1; }
 [[ -f "${PROJECT_ROOT}/icon.png" ]]       || { echo "❌ icon.png not found"; exit 1; }
 command -v dpkg-deb &>/dev/null           || { echo "❌ dpkg-deb not found (apt install dpkg-dev)"; exit 1; }
 
@@ -28,7 +28,7 @@ rm -f "${OUTPUT}"
 
 # --- Copy app files into package tree ------------------------------
 echo "📋 Copying application files…"
-cp "${PROJECT_ROOT}/musicplayer.py" "${BUILD_DIR}/usr/share/mtp/musicplayer.py"
+cp "${PROJECT_ROOT}/mtp.py" "${BUILD_DIR}/usr/share/mtp/mtp.py"
 
 # Install icon as hicolor theme icon (so .desktop can reference by name)
 ICON_DST="${BUILD_DIR}/usr/share/icons/hicolor/128x128/apps/${PKG_NAME}.png"
@@ -43,7 +43,7 @@ done
 chmod 755 "${BUILD_DIR}/usr/bin/${PKG_NAME}"
 chmod 644 "${BUILD_DIR}/usr/share/applications/${PKG_NAME}.desktop"
 chmod 644 "$ICON_DST"
-chmod 644 "${BUILD_DIR}/usr/share/mtp/musicplayer.py"
+chmod 644 "${BUILD_DIR}/usr/share/mtp/mtp.py"
 
 # Ensure correct permissions throughout
 find "${BUILD_DIR}" -type d -exec chmod 755 {} \;

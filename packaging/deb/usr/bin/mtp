@@ -4,8 +4,8 @@ set -euo pipefail
 
 APP_DIR="/usr/share/mtp"
 
-if [[ ! -f "${APP_DIR}/musicplayer.py" ]]; then
-    echo "Error: musicplayer.py not found at ${APP_DIR}/musicplayer.py" >&2
+if [[ ! -f "${APP_DIR}/mtp.py" ]]; then
+    echo "Error: mtp.py not found at ${APP_DIR}/mtp.py" >&2
     exit 1
 fi
 
@@ -25,4 +25,4 @@ python3 -c "import numpy" 2>/dev/null || {
 }
 
 cd "$APP_DIR"
-exec python3 musicplayer.py "$@"
+exec python3 mtp.py "$@"
