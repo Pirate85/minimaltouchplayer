@@ -68,7 +68,7 @@ def S(key):
     return STRINGS[key][_LANG]
 
 HERE          = os.path.dirname(os.path.abspath(__file__))
-CONFIG_DIR    = os.path.expanduser("~/.mtp")
+CONFIG_DIR    = os.path.expanduser("~/.config/mtp")
 CONFIG_PATH   = os.path.join(CONFIG_DIR, "config.json")
 FONT          = "DejaVu Sans"
 

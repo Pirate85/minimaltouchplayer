@@ -89,7 +89,7 @@ Select a music folder and press play. Tracks are scanned recursively, played in 
 
 ## Configuration
 
-Runtime settings (volume, last folder, zoom level, resume position) are stored automatically in `~/.mtp/config.json`. The directory is created on first save. No manual configuration needed.
+Runtime settings (volume, last folder, zoom level, resume position) are stored automatically in `~/.config/mtp/config.json`. The directory is created on first save. No manual configuration needed.
 
 ### Audio device override
 
@@ -134,7 +134,7 @@ sudo dpkg -r mtp
 #          /usr/share/mtp/
 
 # User config (NOT removed by package uninstall):
-rm -rf ~/.mtp/    # optional: removes saved volume, folder, resume position
+rm -rf ~/.config/mtp/   # optional: removes saved volume, folder, resume position
 ```
 
 ## License
