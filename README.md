@@ -143,4 +143,5 @@ rm -rf ~/.config/mtp/   # optional: removes saved volume, folder, resume positio
 
 ---
 
-*Built with ❤️ for touch-friendly desktop music listening.*
+*Built with ❤️ for touch-friendly desktop music listening.*  
+*Developed by Pirate85 & Herbert (Local AI)*
