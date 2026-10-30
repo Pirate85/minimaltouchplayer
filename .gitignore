@@ -11,11 +11,13 @@ config.json
 # Backups & temp
 *.bak
 *.bak.*
+*.bak-*
 backup-*.zip
 backup-*.tar.gz
 
 # Build artifacts
 packaging/*.deb
+packaging/deb/usr/share/mtp/
 
 # IDE
 .vscode/
