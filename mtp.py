@@ -49,7 +49,8 @@ C_DIM     = "#8b91a0"
 
 # ------------------- Bilinguale Strings (DE/EN per System-Locale) ---------
 def _detect_lang():
-    loc = (locale.getdefaultlocale() or ("C",))[0]
+    # locale.getdefaultlocale() ist deprecated → locale.getlocale()[0] + Env-Fallback
+    loc = locale.getlocale()[0] or os.environ.get("LANG", "C")
     return "de" if loc.lower().startswith("de") else "en"
 
 _LANG = _detect_lang()
@@ -176,7 +177,9 @@ class Engine:
         raise RuntimeError("Kein Audio-Ausgabegerät gefunden (paplay/aplay fehlt).")
 
     def _scale(self, data, fade_start=1.0, fade_end=1.0):
-        v = self._vol
+        # Gehörrichtige Skalierung: v² Kurve (logarithmisch wahrnehmbar).
+        # Bei v=0.5 → Faktor 0.25 statt linear 0.5 → feinfühliger im unteren/mittleren Bereich.
+        v = self._vol * self._vol
         if np is not None:
             a = np.frombuffer(data, dtype=np.int16).astype(np.float32)
             if fade_start < 1.0 or fade_end < 1.0:
@@ -259,6 +262,11 @@ class Engine:
     def play(self, path, start=0.0):
         same_file = (self.path == path and self.duration is not None)
         self.stop()
+        # Thread-Safety: alten Pump-Thread sicher beenden, bevor ein neuer startet.
+        # Verhindert Race Conditions bei rapid Skipping (prev/next in schneller Folge).
+        old_thread = self.thread
+        if old_thread is not None and old_thread.is_alive():
+            old_thread.join(timeout=0.5)   # max 500 ms — GUI bleibt responsiv
         self.path = path
         if not same_file:
             self.duration = probe_duration(path)
@@ -371,9 +379,11 @@ class MusicPlayer:
         self.volume = int(cfg.get("volume", 80))
         self.last_folder = cfg.get("last_folder") or None
         self.scale = float(cfg.get("scale", 1.0))
-        # Shuffle & Repeat (v1.2)
+        # Shuffle & Repeat (v1.2) — Fisher-Yates Index-Pool statt random.choice
         self.shuffle_enabled = bool(cfg.get("shuffle", False))
         self.repeat_mode = int(cfg.get("repeat", 0))   # 0=off, 1=all, 2=one
+        self._shuffle_order: list[int] = []           # gemischte Index-Liste
+        self._shuffle_pos: int = 0                     # aktueller Position im Pool
         # Resume: letzter Titel + Position (überlebt Neustart)
         self._resume_track = cfg.get("last_track") or None
         self._resume_pos = float(cfg.get("last_pos", 0))
@@ -667,15 +677,32 @@ class MusicPlayer:
         list_frame.pack(fill="both", expand=True, padx=10, pady=(0, 8))
 
         def _count_tracks(folder_path, limit=500):
-            """Zählt Audio-Dateien rekursiv. Stoppt bei `limit` → '500+'."""
+            """Zählt Audio-Dateien NUR in der obersten Ebene (os.scandir).
+            Verhindert GUI-Freeze bei großen Bibliotheken — kein rekursiver os.walk!"""
             count = 0
             try:
-                for _dp, _dn, fns in os.walk(folder_path):
-                    for f in fns:
-                        if os.path.splitext(f)[1].lower() in AUDIO_EXTS:
-                            count += 1
-                            if count > limit:
-                                return f"{limit}+"
+                with os.scandir(folder_path) as it:
+                    for entry in it:
+                        try:
+                            if entry.is_file(follow_symlinks=False):
+                                if os.path.splitext(entry.name)[1].lower() in AUDIO_EXTS:
+                                    count += 1
+                                    if count > limit:
+                                        return f"{limit}+"
+                            elif entry.is_dir(follow_symlinks=False):
+                                # Max. 1 Ebene tiefer (nicht rekursiv!) — schneller Kompromiss
+                                with os.scandir(entry.path) as sub_it:
+                                    for sub in sub_it:
+                                        try:
+                                            if sub.is_file(follow_symlinks=False):
+                                                if os.path.splitext(sub.name)[1].lower() in AUDIO_EXTS:
+                                                    count += 1
+                                                    if count > limit:
+                                                        return f"{limit}+"
+                                        except (PermissionError, OSError):
+                                            pass
+                        except (PermissionError, OSError):
+                            continue
             except (PermissionError, OSError):
                 pass
             return str(count) if count > 0 else ""
@@ -796,6 +823,8 @@ class MusicPlayer:
             self.status.configure(text=f"❌ {S('no_audio')}: {os.path.basename(path)}")
             return
         self.playlist = files
+        self._shuffle_order = []   # Pool bei Playlist-Wechsel zurücksetzen
+        self._shuffle_pos = 0
         self.current_folder = path
         self.folder_name = os.path.basename(os.path.normpath(path))
         # Resume: letzter Titel in der Playlist gefunden? → dorthin springen
@@ -859,6 +888,25 @@ class MusicPlayer:
             return
         self.play_index((self.index - 1) % len(self.playlist))
 
+    def _reshuffle(self):
+        """Fisher-Yates Shuffle: erzeugt eine gemischte Index-Liste (ohne sofortige Wiederholung)."""
+        n = len(self.playlist)
+        if n <= 1:
+            self._shuffle_order = list(range(n))
+            self._shuffle_pos = 0
+            return
+        # Fisher-Yates (in-place): random.shuffle ist exakt dieser Algorithmus
+        self._shuffle_order = list(range(n))
+        random.shuffle(self._shuffle_order)
+        # Startposition: direkt NACH dem aktuellen Track, damit nicht derselbe wiederholt wird
+        if 0 <= self.index < n and self.index in self._shuffle_order:
+            pos = self._shuffle_order.index(self.index) + 1
+            if pos >= n:
+                pos = 0   # wrap → aber der erste Eintrag ist != current (da shuffled)
+            self._shuffle_pos = pos
+        else:
+            self._shuffle_pos = 0
+
     def auto_next(self):
         """Nächster Titel — respektiert Shuffle & Repeat-Modus."""
         if not self.playlist:
@@ -867,9 +915,12 @@ class MusicPlayer:
         if self.repeat_mode == 2:
             self.play_index(self.index)
             return
-        # Shuffle: zufälliger Titel (nicht den aktuellen, wenn Playlist >1)
+        # Shuffle: gemischte Index-Liste abarbeiten (Fisher-Yates), neu mischen bei Durchlauf
         if self.shuffle_enabled and len(self.playlist) > 1:
-            new_idx = random.choice([i for i in range(len(self.playlist)) if i != self.index])
+            if not self._shuffle_order or self._shuffle_pos >= len(self._shuffle_order):
+                self._reshuffle()   # Pool leer → neu mischen
+            new_idx = self._shuffle_order[self._shuffle_pos]
+            self._shuffle_pos += 1
             self.play_index(new_idx)
             return
         # Normal / Repeat All: nächster in Reihenfolge (bei all → Loop)
@@ -903,6 +954,8 @@ class MusicPlayer:
     # ----------------------------- Shuffle & Repeat (v1.2) -----------------
     def toggle_shuffle(self):
         self.shuffle_enabled = not self.shuffle_enabled
+        if self.shuffle_enabled and self.playlist:
+            self._reshuffle()   # Pool neu mischen wenn Shuffle aktiviert wird
         img = self.img_shuffle_on if self.shuffle_enabled else self.img_shuffle_off
         try:
             self.btn_shuffle.configure(image=img)

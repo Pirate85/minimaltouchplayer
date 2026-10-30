@@ -190,6 +190,13 @@ Leertaste Play/Pause · ←/→ Vor/Zurück · ↑/↓ Lautstärke · `o` Ordner
 - **Duration-Cache:** Gleicher Track → keine neue ffprobe-Aufrufe bei Seek (schneller)
 - Erfolg/Fehler am **ffmpeg-Rückgabecode** (rc==0 → `ended`, sonst `error`) erkannt
 
+## Optimierungen v1.2.1 (30.10.2026 20:50)
+- **Thread-Safety:** `play()` ruft vor neuem Thread `old_thread.join(timeout=0.5)` auf → kein Race bei rapid Skipping
+- **Gehörrichtige Lautstärke:** `_scale()` nutzt v² Kurve (`v = self._vol * self._vol`) statt linear → feinfühliger im unteren/mittleren Bereich (50% → Faktor 0.25)
+- **True Shuffle (Fisher-Yates):** `_shuffle_order` Pool + `_shuffle_pos` Zähler → mischt alle Titel ohne Wiederholung, neu erst beim Durchlauf. Reset bei Playlist-Wechsel & Shuffle-On. Startposition: nach aktuellem Track.
+- **Picker-Performance:** `_count_tracks()` nur noch max. 2 Ebenen tief via `os.scandir` (statt rekursivem `os.walk`) → kein GUI-Freeze bei großen Bibliotheken
+- **Locale-Fix:** `locale.getdefaultlocale()` (deprecated) → `locale.getlocale()[0] or os.environ.get("LANG", "C")`
+
 ## ✅ Config-Pfad-Bug — GEFIXT (26.10.2026)
 **War:** Player schrieb `config.json` ins Verzeichnis wo `mtp.py` liegt → bei .deb-Install `/usr/share/mtp/` = root-owned, keine Schreibrechte!
 
@@ -201,11 +208,17 @@ Leertaste Play/Pause · ←/→ Vor/Zurück · ↑/↓ Lautstärke · `o` Ordner
 - `.gitignore` hat `config.json` schon drin → bleibt so ✅
 
 ## Changelog
-- **2026-10-30 (v1.2 — Usability-Features: Track-Dropdown, Natural Sort, Picker-Count):**
-  - **Klickbarer Titel → Track-Dropdown:** Tap auf den Tracktitel öffnet breites Popup (min. Player-Breite, max. 45% Screenbreite) mit großer Schrift (14pt), scrollbar, aktueller Track grün + ▶ hervorgehoben. Auswahl → direkt abspielen. Escape schließt.
+- **2026-10-30 (v1.2 FINAL — Usability + Icons + GitHub):**
+  - **Klickbarer Titel → Track-Dropdown:** Tap auf den Tracktitel öffnet breites Popup mit großer Schrift (14pt), scrollbar, aktueller Track grün + ▶ hervorgehoben. Auswahl → direkt abspielen. Escape schließt.
   - **Natural Sort:** `natural_sort_key()` — Zahlen in Dateinamen werden numerisch sortiert (Track 2 < Track 3 < … < Track 10). Gilt für Playlist UND Folderpicker-Ordnerliste. Case-insensitive.
-  - **Track-Anzahl im Folderpicker:** Jeder Ordner zeigt jetzt die Audio-Datei-Anzahl: `📁 Meine Musik   (42)`. Wird rekursiv gezählt (`_count_tracks()`), nur bei >0 angezeigt. Dynamische Breite passt sich an.
-  - Alle Features additiv — kein Layout-Change, keine neuen Dependencies (`re` ist Stdlib).
+  - **Track-Anzahl im Folderpicker:** `_count_tracks(limit=500)` → zeigt `📁 Name   (42)` oder `(500+)`. Rekursiv, nur bei >0.
+  - **Icons +50% größer:** backward/forward/shuffle/repeat: 45×36, play/pause/folder: 51×42 / 54×42.
+  - **`current_folder` explizit gespeichert** (robuster Config-Save, kein mehr `playlist[0]`-Trick).
+  - **Picker-Breite fix:** BASE_W=800, CTkScrollableFrame mit expliziter `width=`, dynamisch bis 950px. Kumpel-Tipp: `width=` auf ScrollableFrame verhindert den 200px-CTk-Bug!
+  - **.deb v1.2.0 gebaut** (95KB) — enthält alle Features.
+  - **GitHub Push:** master + Tag v1.2.0 → https://github.com/Pirate85/minimaltouchplayer
+  - ✅ **README v1.2** aktualisiert: Features, Screenshots (Main + Folderpicker + Track Dropdown), Changelog — Commit `70c59ac`.
+  - ✅ **GitHub Release v1.2.0** live mit `.deb`-Attachment → https://github.com/Pirate85/minimaltouchplayer/releases/tag/v1.2.0
 - **2026-10-29 (v1.2 — Icons, Shuffle/Repeat, Engine-Update):**
   - Neues Projektordner: `~/KI Projekte/MinimalTouchPlayer 1.2.0` (eigenständig von v1.1)
   - **PNG-Icons:** Alle Unicode-Zeichen (⏮▶⏭📂) → echte PNG-Bilder aus `MTP Icons/` (512×400 RGBA, transparenter BG)
