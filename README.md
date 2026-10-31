@@ -6,7 +6,7 @@ A minimalist, **square** desktop music player designed for small touch monitors 
 
 | Main View | Folder Picker | Track Dropdown |
 |-----------|---------------|----------------|
-| ![Main](images/MinimalTouchPlayer_v1_2_Main.png) | ![Folder Picker](images/MinimalTouchPlayer_v1_2_Folderpicker.png) | ![Track Dropdown](images/Track%20Topdown_1.2.0.png) |
+| ![Main](images/MinimalTouchPlayer_v1_2_Main.png) | ![Folder Picker](images/MinimalTouchPlayer_v1_2_Folderpicker.png) | ![Track Dropdown](images/MinimalTouchPlayer_v1_2_Track%20Topdown.png) |
 
 > v1.2 ships with large, high-contrast PNG icons (512×400 RGBA) for effortless touch operation.
 
