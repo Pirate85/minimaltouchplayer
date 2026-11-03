@@ -26,16 +26,19 @@ command -v dpkg-deb &>/dev/null           || { echo "❌ dpkg-deb not found (apt
 # --- Clean previous build artifacts --------------------------------
 rm -f "${OUTPUT}"
 
-# --- Copy app files into package tree ------------------------------
-echo "📋 Copying application files…"
-cp "${PROJECT_ROOT}/mtp.py" "${BUILD_DIR}/usr/share/mtp/mtp.py"
+# --- Update DEBIAN/control version (always sync with $VERSION) ------
+sed -i "s/^Version:.*/Version: ${VERSION}/" "${BUILD_DIR}/DEBIAN/control"
 
-# Copy MTP UI icons (play, pause, shuffle, folder, etc.) — refresh on every build!
-rm -rf "${BUILD_DIR}/usr/share/mtp/MTP Icons"
-cp -r "${PROJECT_ROOT}/MTP Icons" "${BUILD_DIR}/usr/share/mtp/MTP Icons"
+# --- Copy app files into package tree (nuke & refresh everything) ----
+echo "📋 Copying application files…"
+rm -rf "${BUILD_DIR}/usr/share/mtp"
+mkdir -p "${BUILD_DIR}/usr/share/mtp"
+cp "${PROJECT_ROOT}/mtp.py" "${BUILD_DIR}/usr/share/mtp/"
+cp -r "${PROJECT_ROOT}/MTP Icons" "${BUILD_DIR}/usr/share/mtp/"
 
 # Install icon as hicolor theme icon (so .desktop can reference by name)
 ICON_DST="${BUILD_DIR}/usr/share/icons/hicolor/128x128/apps/${PKG_NAME}.png"
+mkdir -p "$(dirname "$ICON_DST")"
 cp "${PROJECT_ROOT}/icon.png" "$ICON_DST"
 
 # --- Set permissions -------------------------------------------------
