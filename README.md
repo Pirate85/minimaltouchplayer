@@ -8,7 +8,7 @@ A minimalist, **square** desktop music player designed for small touch monitors 
 |-----------|---------------|----------------|
 | ![Main](images/MinimalTouchPlayer_v1_2_Main.png) | ![Folder Picker](images/MinimalTouchPlayer_v1_2_Folderpicker.png) | ![Track Dropdown](images/MinimalTouchPlayer_v1_2_Track%20Topdown.png) |
 
-> v1.2 ships with large, high-contrast PNG icons (512×400 RGBA) for effortless touch operation.
+> v1.2.1 ships with transparent, high-contrast PNG icons (512×400 RGBA) for effortless touch operation on any theme.
 
 ## Features
 
@@ -129,7 +129,7 @@ Architecture: `ffmpeg` decodes immediately into a pipe → Python pump thread sc
 ## Project Structure
 
 ```
-├── mtp.py                  # Complete application v1.2 (GUI + audio engine)
+├── mtp.py                  # Complete application v1.2.1 (GUI + audio engine)
 ├── MTP Icons/              # 10 PNG button icons (512×400 RGBA, transparent BG)
 ├── icon.png                # App icon (512×512)
 ├── start.sh                # Development launcher script
@@ -153,6 +153,11 @@ rm -rf ~/.config/mtp/   # optional: removes saved volume, folder, resume positio
 ```
 
 ## Changelog
+
+### v1.2.1 (2026-11-03)
+- **Transparent icons** — all PNG icons now have transparent backgrounds (no gray box), ~60 % smaller file size, cleaner on any theme
+- **Simplified folder picker** — removed redundant OK button; Cancel moved next to Play in top nav row `[↑] [▶ Play] [Abbrechen]`, full height for folder list
+- **Build fixes** — build script now auto-syncs DEBIAN/control version and refreshes entire app directory on every build
 
 ### v1.2.0 (2026-10-30)
 - **Track dropdown** — tap the title to open a scrollable track list with large 14 pt font; select any song instantly
