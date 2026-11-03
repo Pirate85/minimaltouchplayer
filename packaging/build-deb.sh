@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PKG_NAME="mtp"
-VERSION="1.1.0"
+VERSION="1.2.1"
 BUILD_DIR="${SCRIPT_DIR}/deb"
 OUTPUT="${SCRIPT_DIR}/${PKG_NAME}_${VERSION}_all.deb"
 

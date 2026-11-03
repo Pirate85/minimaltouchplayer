@@ -32,7 +32,7 @@ except Exception:            # numpy optional — Fallback weiter unten
 
 
 # ----------------------------- Konstanten ---------------------------------
-VERSION = "1.2"              # Anzeigeversion (unten rechts im UI)
+VERSION = "1.2.1"            # Anzeigeversion (unten rechts im UI)
 SR   = 48000                 # interne Abtastrate (universell unterstützt)
 CH   = 2                     # Stereo
 AUDIO_EXTS = {".mp3", ".flac", ".ogg", ".oga", ".opus", ".m4a", ".aac",
