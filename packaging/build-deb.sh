@@ -30,6 +30,10 @@ rm -f "${OUTPUT}"
 echo "📋 Copying application files…"
 cp "${PROJECT_ROOT}/mtp.py" "${BUILD_DIR}/usr/share/mtp/mtp.py"
 
+# Copy MTP UI icons (play, pause, shuffle, folder, etc.) — refresh on every build!
+rm -rf "${BUILD_DIR}/usr/share/mtp/MTP Icons"
+cp -r "${PROJECT_ROOT}/MTP Icons" "${BUILD_DIR}/usr/share/mtp/MTP Icons"
+
 # Install icon as hicolor theme icon (so .desktop can reference by name)
 ICON_DST="${BUILD_DIR}/usr/share/icons/hicolor/128x128/apps/${PKG_NAME}.png"
 cp "${PROJECT_ROOT}/icon.png" "$ICON_DST"
