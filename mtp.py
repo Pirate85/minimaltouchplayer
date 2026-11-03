@@ -661,16 +661,9 @@ class MusicPlayer:
         ctk.CTkButton(navrow, text="▶ Play", command=lambda: on_select(path_var["current"]),
                       width=80, height=32, fg_color=C_ACCENT, hover_color="#a7f3b4",
                       text_color="#1a1d23", corner_radius=8, font=self._fnt(12)).pack(side="left")
-
-        # OK / Abbrechen (unten — ERST packen damit sie IMMER sichtbar bleiben)
-        btnrow = ctk.CTkFrame(dlg, fg_color="transparent")
-        btnrow.pack(side="bottom", fill="x", pady=(0, 12))
-        ctk.CTkButton(btnrow, text=S("cancel"), command=on_cancel, width=110, height=38,
-                      fg_color=C_BTN, hover_color=C_BTN_HOV, text_color=C_TEXT,
-                      corner_radius=10, font=self._fnt(12)).pack(side="right", padx=(6, 10))
-        ctk.CTkButton(btnrow, text=S("ok"), command=lambda: on_select(path_var["current"]),
-                      width=110, height=38, fg_color=C_ACCENT, hover_color="#a7f3b4",
-                      text_color="#1a1d23", corner_radius=10, font=self._fnt(13)).pack(side="right")
+        ctk.CTkButton(navrow, text=S("cancel"), command=on_cancel, width=90, height=32,
+                      fg_color=C_BTN, hover_color=C_BTN_HOV, text_color=C_DIM,
+                      corner_radius=8, font=self._fnt(12)).pack(side="left", padx=(6, 0))
 
         # Scrollbare Ordner-Liste (explizite Startbreite verhindert den 200px-CTk-Bug!)
         list_frame = ctk.CTkScrollableFrame(dlg, width=BASE_W - 40, fg_color=C_PANEL, corner_radius=10)
