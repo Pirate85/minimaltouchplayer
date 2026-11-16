@@ -27,44 +27,58 @@ A minimalist, **square** desktop music player designed for small touch monitors 
 
 ## Installation
 
-### Dependencies
+### System Dependencies
 
-| Package | Source | Notes |
-|---------|--------|-------|
-| Python 3.10+ | `apt` / preinstalled | Runtime |
-| **CustomTkinter** | **`pip install customtkinter`** | ⚠️ NOT in apt repos — must be installed via pip |
-| NumPy | `sudo apt install python3-numpy` or `pip install numpy` | Audio processing |
-| FFmpeg | `sudo apt install ffmpeg` | Audio decoding |
-| ALSA / PipeWire | `sudo apt install alsa-utils` (or `pipewire-pulseaudio`) | System audio output |
+| Package | Debian / Ubuntu | Fedora / RHEL | Notes |
+|---------|----------------|---------------|-------|
+| Python 3.10+ | preinstalled | preinstalled | Runtime |
+| NumPy | `sudo apt install python3-numpy` | `sudo dnf install python3-numpy` | Audio processing |
+| Pillow (PIL) | `sudo apt install python3-pil` | `sudo dnf install python3-pillow` | Image handling |
+| FFmpeg | `sudo apt install ffmpeg` | `sudo dnf install ffmpeg` | Audio decoding |
+| ALSA / PipeWire | `sudo apt install alsa-utils` | preinstalled (PipeWire) | System audio output |
 
-> **Note:** CustomTkinter is the only dependency that cannot be installed via `apt`. It must be installed with `pip`. The `.deb` package does NOT bundle it.
+> ✅ **CustomTkinter is bundled** in both the `.deb` and `.rpm` packages — no `pip install` needed!
 
-### From .deb package (recommended)
+### From .deb package (Debian / Ubuntu)
 
 ```bash
 # Prerequisites (one-time setup)
-sudo apt install dpkg-dev ffmpeg alsa-utils python3-numpy
-pip install customtkinter
+sudo apt install ffmpeg alsa-utils python3-numpy python3-pil
 
-# Build the package
+# Install from release asset:
+sudo dpkg -i mtp_1.2.1_all.deb
+# or: sudo apt install ./mtp_1.2.1_all.deb
+
+# Or build locally:
 ./packaging/build-deb.sh
-
-# Install
-sudo dpkg -i packaging/mtp_1.2.0_all.deb
-
-# Or via apt:
-sudo apt install ./packaging/mtp_1.2.0_all.deb
+sudo dpkg -i packaging/mtp_1.2.1_all.deb
 ```
 
-The package installs the app to `/usr/share/mtp/`, a launcher at `/usr/bin/mtp`, and registers it in your application menu automatically. The launcher will warn you if any dependency is missing.
+### From .rpm package (Fedora / RHEL)
+
+```bash
+# Prerequisites (one-time setup)
+sudo dnf install ffmpeg python3-numpy python3-pillow
+
+# Install from release asset:
+sudo rpm -i mtp-1.2.1-1.noarch.rpm
+# or: sudo dnf install ./mtp-1.2.1-1.noarch.rpm
+
+# Or build locally (requires rpm-build):
+sudo dnf install rpm-build
+./packaging/build-rpm.sh
+sudo rpm -i packaging/mtp-1.2.1-1.noarch.rpm
+```
+
+Both packages install the app to `/usr/share/mtp/`, a launcher at `/usr/bin/mtp`, and register it in your application menu automatically. The launcher will warn you if any system dependency is missing.
 
 ### From source (any Linux distro)
 
 ```bash
 # Install all dependencies (adjust package manager for your distro)
-sudo apt install python3 ffmpeg alsa-utils python3-numpy   # Debian/Ubuntu
-# sudo dnf install python3 ffmpeg alsa-utils python3-numpy  # Fedora
-# sudo pacman -S python ffmpeg alsa-lib numpy               # Arch
+sudo apt install python3 ffmpeg alsa-utils python3-numpy python3-pil   # Debian/Ubuntu
+# sudo dnf install python3-tkinter ffmpeg python3-numpy python3-pillow  # Fedora
+# sudo pacman -S python ffmpeg alsa-lib numpy python-pillow             # Arch
 
 pip install customtkinter
 
@@ -74,7 +88,7 @@ pip install customtkinter
 python3 mtp.py
 ```
 
-#### Optional: Add to your application menu
+#### Optional: Add to your application menu (source install)
 
 1. Copy `mtp.desktop` to `~/.local/share/applications/`
 2. Replace `/PATH/TO/REPO` with your actual clone path (e.g., `~/projects/minimaltouchplayer`)

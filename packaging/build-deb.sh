@@ -36,6 +36,11 @@ mkdir -p "${BUILD_DIR}/usr/share/mtp"
 cp "${PROJECT_ROOT}/mtp.py" "${BUILD_DIR}/usr/share/mtp/"
 cp -r "${PROJECT_ROOT}/MTP Icons" "${BUILD_DIR}/usr/share/mtp/"
 
+# Vendor Python packages (customtkinter, darkdetect) — no pip needed at runtime!
+if [[ -d "${SCRIPT_DIR}/vendor" ]]; then
+    cp -r "${SCRIPT_DIR}/vendor" "${BUILD_DIR}/usr/share/mtp/vendor"
+fi
+
 # Install icon as hicolor theme icon (so .desktop can reference by name)
 ICON_DST="${BUILD_DIR}/usr/share/icons/hicolor/128x128/apps/${PKG_NAME}.png"
 mkdir -p "$(dirname "$ICON_DST")"

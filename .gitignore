@@ -27,3 +27,9 @@ packaging/deb/usr/share/mtp/
 .idea/
 *.swp
 .session_context/
+
+
+# RPM build artifacts
+packaging/rpm-tmp/
+*.rpm
+*.DS_Store
