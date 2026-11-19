@@ -12,6 +12,7 @@ Source0:        %{name}-%{version}.tar.gz
 Requires:       python3 >= 3.10
 Requires:       python3-numpy
 Requires:       python3-pillow
+Requires:       python3-pillow-tk
 Requires:       ffmpeg
 # Audio backend (at least one required — launcher checks at runtime)
 Requires:       alsa-utils
