@@ -3,7 +3,7 @@ Version: 1.2.1
 Section: sound
 Priority: optional
 Architecture: all
-Depends: python3 (>= 3.10), python3-numpy, ffmpeg, alsa-utils | pipewire-pulseaudio
+Depends: python3 (>= 3.10), python3-numpy, python3-tk, python3-pil, python3-pil.imagetk, ffmpeg, alsa-utils | pipewire-pulseaudio
 Maintainer: Pirate85 <Pirate85@web.de>
 Description: MinimalTouchPlayer — minimalist touch music player
  A square, dark-themed desktop music player with large touch-friendly buttons and no album art.
