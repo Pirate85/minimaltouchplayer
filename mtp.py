@@ -505,8 +505,11 @@ class MusicPlayer:
                                   fg_color=C_PANEL, progress_color=C_ACCENT,
                                   button_color=C_ACCENT, button_hover_color="#a7f3b4")
         self.seek.grid(row=0, column=0, sticky="ew")
-        self.seek.bind("<ButtonPress-1>", lambda e: setattr(self, "dragging_seek", True))
-        self.seek.bind("<ButtonRelease-1>", self.on_seek_release)
+        self._bind_touch_slider(
+            self.seek,
+            on_press=lambda e: setattr(self, "dragging_seek", True),
+            on_release=self.on_seek_release,
+        )
 
         # --- Transport-Icons (PNG aus MTP Icons/) ---
         ctrl = ctk.CTkFrame(root, fg_color="transparent")
@@ -540,6 +543,10 @@ class MusicPlayer:
                                  button_color=C_ACCENT, button_hover_color="#a7f3b4")
         self.vol.set(self.volume)
         self.vol.grid(row=0, column=1, sticky="ew")
+        self._bind_touch_slider(
+            self.vol,
+            on_change=self.on_volume,
+        )
 
         # --- Shuffle · Ordner · Repeat (neue Zeile v1.2) ---
         bottom = ctk.CTkFrame(root, fg_color="transparent")
@@ -929,6 +936,43 @@ class MusicPlayer:
         self.play_index(next_idx)
 
     # ----------------------------- Slider ---------------------------------
+    def _bind_touch_slider(self, slider, on_press=None, on_change=None, on_release=None):
+        """Filtert XWayland-Pointer-Warps (z. B. durch Vollbildspiele) auf Touchscreens aus."""
+        canvas = getattr(slider, "_canvas", slider)
+        state = {"last_x": None}
+
+        def _handle_touch(event):
+            w = canvas.winfo_width()
+            if w <= 1:
+                return "break"
+            if event.x < -16 or event.x > w + 16:
+                return "break"
+            is_press = str(event.type) in ("ButtonPress", "4")
+            if is_press:
+                state["last_x"] = float(event.x)
+                if on_press:
+                    on_press(event)
+            else:
+                if state["last_x"] is not None and abs(float(event.x) - state["last_x"]) > 45.0:
+                    return "break"
+                state["last_x"] = float(event.x)
+            clamped = max(0.0, min(float(w), float(event.x)))
+            val = slider._from_ + (clamped / float(w)) * (slider._to - slider._from_)
+            slider.set(val)
+            if on_change:
+                on_change(val)
+            return "break"
+
+        def _handle_release(event):
+            state["last_x"] = None
+            if on_release:
+                on_release(event)
+            return "break"
+
+        canvas.bind("<ButtonPress-1>", _handle_touch)
+        canvas.bind("<B1-Motion>", _handle_touch)
+        canvas.bind("<ButtonRelease-1>", _handle_release)
+
     def on_volume(self, value):
         self.volume = int(round(float(value)))
         try:
