@@ -46,12 +46,12 @@ A minimalist, **square** desktop music player designed for small touch monitors 
 sudo apt install ffmpeg alsa-utils python3-numpy python3-pil
 
 # Install from release asset:
-sudo dpkg -i mtp_1.2.1_all.deb
-# or: sudo apt install ./mtp_1.2.1_all.deb
+sudo dpkg -i mtp_1.2.2_all.deb
+# or: sudo apt install ./mtp_1.2.2_all.deb
 
 # Or build locally:
 ./packaging/build-deb.sh
-sudo dpkg -i packaging/mtp_1.2.1_all.deb
+sudo dpkg -i packaging/mtp_1.2.2_all.deb
 ```
 
 ### From .rpm package (Fedora / RHEL)
@@ -61,13 +61,13 @@ sudo dpkg -i packaging/mtp_1.2.1_all.deb
 sudo dnf install ffmpeg python3-numpy python3-pillow
 
 # Install from release asset:
-sudo rpm -i mtp-1.2.1-1.noarch.rpm
-# or: sudo dnf install ./mtp-1.2.1-1.noarch.rpm
+sudo rpm -i mtp-1.2.2-1.noarch.rpm
+# or: sudo dnf install ./mtp-1.2.2-1.noarch.rpm
 
 # Or build locally (requires rpm-build):
 sudo dnf install rpm-build
 ./packaging/build-rpm.sh
-sudo rpm -i packaging/mtp-1.2.1-1.noarch.rpm
+sudo rpm -i packaging/mtp-1.2.2-1.noarch.rpm
 ```
 
 Both packages install the app to `/usr/share/mtp/`, a launcher at `/usr/bin/mtp`, and register it in your application menu automatically. The launcher will warn you if any system dependency is missing.
@@ -143,7 +143,7 @@ Architecture: `ffmpeg` decodes immediately into a pipe → Python pump thread sc
 ## Project Structure
 
 ```
-├── mtp.py                  # Complete application v1.2.1 (GUI + audio engine)
+├── mtp.py                  # Complete application v1.2.2 (GUI + audio engine)
 ├── MTP Icons/              # 10 PNG button icons (512×400 RGBA, transparent BG)
 ├── icon.png                # App icon (512×512)
 ├── start.sh                # Development launcher script
@@ -167,6 +167,11 @@ rm -rf ~/.config/mtp/   # optional: removes saved volume, folder, resume positio
 ```
 
 ## Changelog
+
+### v1.2.2 (2026-11-22)
+- **Fedora 45 / PipeWire fix** — `aplay` now preferred over `paplay` (stdin pipe broken on newer PipeWire); lower buffer latency (40 ms) for snappier response
+- **ffmpeg hardening** — `-nostdin` + `stdin=DEVNULL` prevents stdin inheritance issues on Wayland/XWayland desktops
+- **RPM spec fix** — allows `ffmpeg-free` as alternative to `ffmpeg` (Fedora compatibility)
 
 ### v1.2.1 (2026-11-03)
 - **Transparent icons** — all PNG icons now have transparent backgrounds (no gray box), ~60 % smaller file size, cleaner on any theme

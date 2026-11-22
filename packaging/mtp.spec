@@ -1,6 +1,6 @@
 %global _build_id_links none
 Name:           mtp
-Version:        1.2.1
+Version:        1.2.2
 Release:        1%{?dist}
 Summary:        MinimalTouchPlayer — minimalist touch music player
 
@@ -83,6 +83,12 @@ cp usr/share/icons/hicolor/128x128/apps/mtp.png %{buildroot}/usr/share/icons/hic
 
 
 %changelog
+* Sat Nov 22 2026 Pirate85 <Pirate85@web.de> - 1.2.2-1
+- Fedora 45 / PipeWire: prefer aplay over paplay (stdin pipe fix)
+- Reduce audio buffer latency to 40ms
+- ffmpeg: add -nostdin + stdin=DEVNULL for Wayland/XWayland safety
+- RPM spec: allow ffmpeg-free as alternative
+
 * Mon Nov 16 2026 Pirate85 <Pirate85@web.de> - 1.2.1-1
 - Transparent icons (no gray background, ~60% smaller)
 - Simplified folder picker: [↑] [▶ Play] [Abbrechen] in one row

@@ -9,7 +9,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PKG_NAME="mtp"
-VERSION="1.2.1"
+VERSION="1.2.2"
 RELEASE="1"
 OUTPUT="${SCRIPT_DIR}/${PKG_NAME}-${VERSION}-${RELEASE}.noarch.rpm"
 
