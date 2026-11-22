@@ -160,19 +160,18 @@ class Engine:
 
     def _sink_cmd(self):
         dev = os.environ.get("MUSIKPLAYER_DEVICE")     # optional: z.B. "pipewire"
-        if shutil.which("paplay"):
-            # --latency-msec=80 hält den Pipe-Puffer klein -> Lautstärke & Pause reagieren sofort,
-            # und sink.stdin.write() übernimmt die exakte Echtzeit-Taktung der Soundkarte!
-            cmd = ["paplay", "--format=s16le", f"--rate={SR}", f"--channels={CH}",
-                   "--latency-msec=80"]
-            if dev:
-                cmd += [f"--device={dev}"]
-            return cmd + ["-"]
+        # aplay zuerst (funktioniert zuverlässig auf Fedora 45 / PipeWire)
         if shutil.which("aplay"):
             cmd = ["aplay", "-q", "-f", "S16_LE", "-r", str(SR), "-c", str(CH),
-                   "--buffer-time=80000"]
+                   "--buffer-time=40000"]
             if dev:
                 cmd += [f"-D{dev}"]
+            return cmd + ["-"]
+        # paplay als Fallback (auf Fedora 45 stdin-Pipe kaputt!)
+        if shutil.which("paplay"):
+            cmd = ["paplay", "--format=s16le", f"--rate={SR}", f"--channels={CH}"]
+            if dev:
+                cmd += [f"--device={dev}"]
             return cmd + ["-"]
         raise RuntimeError("Kein Audio-Ausgabegerät gefunden (paplay/aplay fehlt).")
 
@@ -275,13 +274,13 @@ class Engine:
         self._offset = max(0.0, float(start))
 
         # KEIN "-re" mehr! ffmpeg dekodiert sofort in die Pipe, Taktung erfolgt über sink.
-        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error"]
+        cmd = ["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error"]
         if start and start > 0.05:
             cmd += ["-ss", f"{start:.3f}"]
         cmd += ["-i", path, "-vn", "-sn", "-dn",
                 "-f", "s16le", "-ar", str(SR), "-ac", str(CH), "-"]
 
-        self.ff = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        self.ff = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         self.sink = subprocess.Popen(self._sink_cmd(), stdin=subprocess.PIPE,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         with self._cond:

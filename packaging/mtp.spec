@@ -13,7 +13,7 @@ Requires:       python3 >= 3.10
 Requires:       python3-numpy
 Requires:       python3-pillow
 Requires:       python3-pillow-tk
-Requires:       ffmpeg
+Requires:       (ffmpeg or ffmpeg-free)
 # Audio backend (at least one required — launcher checks at runtime)
 Requires:       alsa-utils
 Recommends:     pipewire-pulseaudio
